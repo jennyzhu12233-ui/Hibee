@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hibee 整体运营流程图</title>
+<style>
+:root {
+  --decision: #DC2626; --decision-l: #FEF2F2; --decision-b: #FECACA;
+  --sales:    #64748B; --sales-l:    #F8FAFC; --sales-b:    #CBD5E1;
+  --cs:       #2563EB; --cs-l:       #EFF6FF; --cs-b:       #BFDBFE;
+  --consult:  #7C3AED; --consult-l:  #F5F3FF; --consult-b:  #C4B5FD;
+  --cm:       #059669; --cm-l:       #ECFDF5; --cm-b:       #6EE7B7;
+  --delivery: #EA580C; --delivery-l: #FFF7ED; --delivery-b: #FDBA74;
+  --client:   #475569; --client-l:   #F8FAFC; --client-b:   #E2E8F0;
+  --shared:   #B45309; --shared-l:   #FFFBEB; --shared-b:   #FDE68A;
+  --bg: #F1F5F9; --card: #FFFFFF;
+  --text: #0F172A; --muted: #64748B; --faint: #94A3B8;
+  --border: #E2E8F0;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:100;background:var(--text);padding:0 24px;display:flex;gap:0;overflow-x:auto;box-shadow:0 2px 8px rgba(0,0,0,.3);}
+.nav-btn{padding:14px 18px;font-size:12px;font-weight:700;color:#94A3B8;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:.2s;letter-spacing:.3px;}
+.nav-btn:hover{color:white;}
+.nav-btn.active{color:white;border-bottom-color:white;}
+
+/* PAGE */
+.page{display:none;padding:28px 24px;max-width:1200px;margin:0 auto;}
+.page.active{display:block;}
+
+/* CARD */
+.card{background:var(--card);border-radius:14px;padding:24px;margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.07);}
+.card-title{font-size:15px;font-weight:700;margin-bottom:18px;padding-bottom:12px;border-bottom:2px solid var(--bg);display:flex;align-items:center;gap:8px;}
+.card-title .badge{background:var(--text);color:white;border-radius:50%;width:24px;height:24px;font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+
+/* NODE */
+.n{border-radius:8px;padding:8px 14px;font-size:12px;font-weight:600;text-align:center;display:inline-flex;align-items:center;justify-content:center;line-height:1.4;gap:6px;}
+.n-decision{background:var(--decision-l);border:1.5px solid var(--decision-b);color:var(--decision);}
+.n-sales   {background:var(--sales-l);   border:1.5px solid var(--sales-b);   color:var(--sales);}
+.n-cs      {background:var(--cs-l);      border:1.5px solid var(--cs-b);      color:var(--cs);}
+.n-consult {background:var(--consult-l); border:1.5px solid var(--consult-b); color:var(--consult);}
+.n-cm      {background:var(--cm-l);      border:1.5px solid var(--cm-b);      color:var(--cm);}
+.n-delivery{background:var(--delivery-l);border:1.5px solid var(--delivery-b);color:var(--delivery);}
+.n-client  {background:var(--client-l);  border:1.5px solid var(--client-b);  color:var(--client);}
+.n-shared  {background:var(--shared-l);  border:1.5px solid var(--shared-b);  color:var(--shared);}
+.n-gate    {background:#FFFBEB;border:2px solid #F59E0B;color:#92400E;border-radius:4px;transform:rotate(0deg);}
+
+/* ARROW */
+.arr{display:flex;flex-direction:column;align-items:center;margin:1px 0;}
+.arr-line{width:2px;height:16px;background:var(--faint);}
+.arr-head{width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:7px solid var(--faint);}
+.arr-lbl{font-size:10px;color:var(--muted);background:white;border:1px solid var(--border);border-radius:4px;padding:1px 6px;margin:2px 0;white-space:nowrap;}
+.arr-r{display:flex;align-items:center;gap:0;}
+.arr-r-line{height:2px;width:20px;background:var(--faint);}
+.arr-r-head{width:0;height:0;border-top:5px solid transparent;border-bottom:5px solid transparent;border-left:7px solid var(--faint);}
+
+/* FLOW COL */
+.fcol{display:flex;flex-direction:column;align-items:center;gap:0;}
+.frow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center;}
+
+/* NOTE */
+.note{font-size:11px;color:var(--muted);background:var(--bg);border:1px dashed var(--border);border-radius:6px;padding:7px 12px;line-height:1.6;}
+.note.warn{background:#FFFBEB;border-color:#FDE68A;color:#92400E;}
+.note.rule{background:#EFF6FF;border-color:#BFDBFE;color:#1E40AF;}
+
+/* ORG */
+.org{display:flex;flex-direction:column;align-items:center;gap:0;}
+.org-row{display:flex;align-items:stretch;gap:12px;justify-content:center;flex-wrap:wrap;}
+.org-box{border-radius:10px;padding:10px 16px;text-align:center;font-size:12px;font-weight:700;min-width:130px;}
+.org-line-v{width:2px;height:20px;background:#CBD5E1;margin:0 auto;}
+.org-line-h{height:2px;background:#CBD5E1;align-self:center;width:60px;}
+
+/* TIMELINE */
+.tl{display:flex;overflow-x:auto;padding-bottom:10px;gap:0;align-items:stretch;}
+.tl-step{flex:1;min-width:110px;display:flex;flex-direction:column;align-items:center;position:relative;padding:0 6px;}
+.tl-step:not(:last-child)::after{content:'→';position:absolute;right:-10px;top:22px;font-size:18px;color:var(--faint);z-index:1;}
+.tl-icon{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:6px;flex-shrink:0;border:2px solid transparent;}
+.tl-title{font-size:11px;font-weight:700;text-align:center;margin-bottom:4px;}
+.tl-owner{font-size:10px;padding:2px 8px;border-radius:10px;text-align:center;font-weight:600;}
+.tl-sub{font-size:10px;color:var(--muted);text-align:center;margin-top:4px;line-height:1.4;}
+
+/* SWIMLANE */
+.sl-wrap{overflow-x:auto;}
+.sl{display:grid;min-width:680px;}
+.sl-hdr{font-size:11px;font-weight:700;padding:8px 10px;text-align:center;border-radius:8px 8px 0 0;}
+.sl-cell{padding:10px 8px;border:1px solid var(--border);border-top:none;min-height:56px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;}
+.sl-cell.shade{background:#FAFAFA;}
+.sl-node{border-radius:6px;padding:5px 8px;font-size:11px;font-weight:600;text-align:center;width:100%;line-height:1.4;}
+
+/* STEPS LIST */
+.steps{display:flex;flex-direction:column;gap:8px;}
+.step-item{display:flex;gap:10px;align-items:flex-start;}
+.step-num{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0;margin-top:1px;}
+.step-body{flex:1;font-size:12px;line-height:1.6;}
+.step-tag{display:inline-block;font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;margin-left:6px;}
+
+/* 2-COL */
+.two{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+@media(max-width:650px){.two{grid-template-columns:1fr;}}
+
+/* PARALLEL */
+.para{display:flex;align-items:flex-start;gap:0;justify-content:center;width:100%;}
+.para-col{flex:1;max-width:180px;display:flex;flex-direction:column;align-items:center;gap:6px;}
+.para-div{width:1px;background:var(--border);align-self:stretch;margin:0 8px;}
+
+/* HEADER */
+.page-hdr{margin-bottom:24px;}
+.page-hdr h2{font-size:20px;font-weight:800;margin-bottom:4px;}
+.page-hdr p{font-size:13px;color:var(--muted);}
+
+/* LEGEND strip */
+.legend{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;}
+.leg{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted);}
+.leg-dot{width:12px;height:12px;border-radius:3px;flex-shrink:0;}
+
+/* PERSON CARD */
+.people{display:flex;flex-wrap:wrap;gap:10px;}
+.person{border-radius:10px;padding:12px 14px;min-width:150px;flex:1;}
+.person-name{font-size:13px;font-weight:800;margin-bottom:4px;}
+.person-role{font-size:11px;font-weight:600;margin-bottom:6px;opacity:.8;}
+.person-items{font-size:11px;line-height:1.7;color:var(--muted);}
+.person-special{font-size:10px;background:rgba(0,0,0,.06);border-radius:5px;padding:3px 7px;margin-top:6px;font-weight:600;}
+
+/* RULE BOX */
+.rule-box{background:var(--cs-l);border:1.5px solid var(--cs-b);border-radius:8px;padding:10px 14px;font-size:12px;line-height:1.8;color:#1E40AF;}
+
+/* ESCALATION */
+.esc-path{border-left:3px solid var(--decision-b);padding-left:12px;margin-left:10px;}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<div class="nav">
+  <div class="nav-btn active" onclick="show('org')">组织架构</div>
+  <div class="nav-btn" onclick="show('main')">案件主流程</div>
+  <div class="nav-btn" onclick="show('sales')">销售入口</div>
+  <div class="nav-btn" onclick="show('consult')">顾问咨询</div>
+  <div class="nav-btn" onclick="show('contract')">签约付款</div>
+  <div class="nav-btn" onclick="show('material')">材料收发</div>
+  <div class="nav-btn" onclick="show('delivery')">交付操作</div>
+  <div class="nav-btn" onclick="show('rfe')">RFE补件</div>
+  <div class="nav-btn" onclick="show('result')">审批结果</div>
+  <div class="nav-btn" onclick="show('shift')">班次交接</div>
+  <div class="nav-btn" onclick="show('escalation')">升级决策</div>
+</div>
+
+<!-- ═══════════════════════════════ PAGE: 组织架构 ═══════════════════════════════ -->
+<div id="p-org" class="page active">
+  <div class="page-hdr"><h2>Hibee 组织架构与职能总览</h2><p>各部门角色定位与分工边界</p></div>
+  <div class="legend">
+    <div class="leg"><div class="leg-dot" style="background:var(--decision-l);border:1.5px solid var(--decision-b)"></div>楚仪/子栋（最终决策）</div>
+    <div class="leg"><div class="leg-dot" style="background:var(--sales-l);border:1.5px solid var(--sales-b)"></div>销售</div>
+    <div class="leg"><div class="leg-dot" style="background:var(--cs-l);border:1.5px solid var(--cs-b)"></div>客服</div>
+    <div class="leg"><div class="leg-dot" style="background:var(--consult-l);border:1.5px solid var(--consult-b)"></div>顾问</div>
+    <div class="leg"><div class="leg-dot" style="background:var(--cm-l);border:1.5px solid var(--cm-b)"></div>CM</div>
+    <div class="leg"><div class="leg-dot" style="background:var(--delivery-l);border:1.5px solid var(--delivery-b)"></div>交付</div>
+  </div>
+
+  <!-- Org chart -->
+  <div class="card">
+    <div class="card-title"><span class="badge">1</span>层级结构</div>
+    <div class="org">
+      <!-- Top -->
+      <div class="org-row">
+        <div class="org-box" style="background:var(--decision-l);border:2px solid var(--decision-b);color:var(--decision)">
+          楚仪<br><small style="font-weight:400;font-size:10px;">客服部门最高负责人·最终决策</small>
+        </div>
+        <div style="display:flex;align-items:center;"><div class="org-line-h"></div><span style="font-size:10px;color:var(--muted);white-space:nowrap;">联合决策</span><div class="org-line-h"></div></div>
+        <div class="org-box" style="background:var(--decision-l);border:2px solid var(--decision-b);color:var(--decision)">
+          子栋<br><small style="font-weight:400;font-size:10px;">联合决策人·L1/EB5主导</small>
+        </div>
+      </div>
+      <div class="org-line-v" style="height:24px;"></div>
+      <!-- CS management -->
+      <div class="org-row">
+        <div class="org-box" style="background:var(--cs-l);border:2px solid var(--cs-b);color:var(--cs)">
+          乐乐<br><small style="font-weight:400;font-size:10px;">客服负责人·中国白班 早9–晚9</small>
+        </div>
+        <div style="display:flex;align-items:center;gap:4px;"><span style="font-size:10px;color:var(--muted);">交接→</span></div>
+        <div class="org-box" style="background:var(--cs-l);border:2px solid var(--cs-b);color:var(--cs)">
+          杨帆<br><small style="font-weight:400;font-size:10px;">值班客服·美国白班 晚9–凌晨4</small>
+        </div>
+      </div>
+      <div class="org-line-v" style="height:16px;"></div>
+      <!-- 4 departments -->
+      <div class="org-row" style="gap:20px;">
+        <div class="org-box" style="background:var(--sales-l);border:1.5px solid var(--sales-b);color:var(--sales)">销售<br><small style="font-weight:400;font-size:10px;">客户入口</small></div>
+        <div class="org-box" style="background:var(--consult-l);border:1.5px solid var(--consult-b);color:var(--consult)">顾问<br><small style="font-weight:400;font-size:10px;">咨询会议</small></div>
+        <div class="org-box" style="background:var(--cm-l);border:1.5px solid var(--cm-b);color:var(--cm)">CM<br><small style="font-weight:400;font-size:10px;">案件全程</small></div>
+        <div class="org-box" style="background:var(--delivery-l);border:1.5px solid var(--delivery-b);color:var(--delivery)">交付<br><small style="font-weight:400;font-size:10px;">产出work product</small></div>
+      </div>
+    </div>
+    <br>
+    <div class="note rule">📌 所有补偿/退款/法律风险/更换CM 的最终决策由<strong>楚仪和子栋共同拍板</strong>，乐乐不得自行决定。</div>
+  </div>
+
+  <!-- People -->
+  <div class="card">
+    <div class="card-title"><span class="badge">2</span>交付团队成员分工</div>
+    <div class="people">
+      <div class="person" style="background:var(--delivery-l);border:1.5px solid var(--delivery-b);">
+        <div class="person-name" style="color:var(--delivery);">Jasmine</div>
+        <div class="person-role" style="color:var(--delivery);">Leader · 统筹</div>
+        <div class="person-items">O1 · RFE · PERM · 复杂H1B · 特殊I-539<br>全部文书最终审核</div>
+        <div class="person-special" style="background:var(--decision-l);color:var(--decision);border:1px solid var(--decision-b);">🔒 专属：G-28填写 · USCIS付款</div>
+      </div>
+      <div class="person" style="background:var(--delivery-l);border:1.5px solid var(--delivery-b);">
+        <div class="person-name" style="color:var(--delivery);">张婕</div>
+        <div class="person-role" style="color:var(--delivery);">Filing Staff</div>
+        <div class="person-items">H1B（主办）· I-539 · 婚绿 · PERM</div>
+        <div class="person-special">专属：I-129/I-539表格检查</div>
+      </div>
+      <div class="person" style="background:var(--delivery-l);border:1.5px solid var(--delivery-b);">
+        <div class="person-name" style="color:var(--delivery);">韩月阳</div>
+        <div class="person-role" style="color:var(--delivery);">联络 + Filing Staff</div>
+        <div class="person-items">H1B · I-539 · PERM(学习中)</div>
+        <div class="person-special">EIN追踪 · 每日查中台表格 · 审批结果追踪 · 政府费用登记 · Review Notes催促</div>
+      </div>
+      <div class="person" style="background:var(--delivery-l);border:1.5px solid var(--delivery-b);">
+        <div class="person-name" style="color:var(--delivery);">Zoe（喻佳琪）</div>
+        <div class="person-role" style="color:var(--delivery);">Filing Staff</div>
+        <div class="person-items">H1B（指导下）<br>协助O1/RFE证据整理、翻译</div>
+      </div>
+      <div class="person" style="background:var(--delivery-l);border:1.5px solid var(--delivery-b);">
+        <div class="person-name" style="color:var(--delivery);">陶律师（Li Tao）</div>
+        <div class="person-role" style="color:var(--delivery);">Filing Staff · 复杂案件</div>
+        <div class="person-items">O1 · RFE等复杂案件<br>少量H1B</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Responsibility boundaries -->
+  <div class="card">
+    <div class="card-title"><span class="badge">3</span>各部门职责边界速查</div>
+    <div class="two">
+      <div>
+        <div style="font-size:12px;font-weight:700;color:var(--cs);margin-bottom:8px;">客服 负责</div>
+        <div class="note rule">建群录入CRM · 客户分层标注 · 话术70%问题 · 合同催签 · 付款确认 · 材料核查七步 · 顾问会议安排 · 会议纪要 · 乐乐↔杨帆交接 · 跨部门协调</div>
+        <div style="font-size:12px;font-weight:700;color:var(--cs);margin:12px 0 8px;">客服 不负责</div>
+        <div class="note">专业移民咨询 · 案件操作 · 文书起草 · 向客户报价</div>
+      </div>
+      <div>
+        <div style="font-size:12px;font-weight:700;color:var(--delivery);margin-bottom:8px;">交付 负责</div>
+        <div class="note" style="background:var(--delivery-l);border-color:var(--delivery-b);color:#7C2D12;">材料完整度核查 · 文书起草/审核 · G-28/USCIS付款(Jasmine) · Receipt Notice · 审批结果追踪/通知 · RFE回应策略 · 政府费用登记</div>
+        <div style="font-size:12px;font-weight:700;color:var(--delivery);margin:12px 0 8px;">交付 不负责</div>
+        <div class="note">客户日常问题 · 合同催签 · 付款确认 · 咨询类政策回复 · 客户群日常维护</div>
+      </div>
+      <div>
+        <div style="font-size:12px;font-weight:700;color:var(--cm);margin-bottom:8px;">CM 负责</div>
+        <div class="note" style="background:var(--cm-l);border-color:var(--cm-b);color:#065F46;">全程在群跟进 · 20%专业问题直接回复 · Review Notes填写 · 案件策略决策 · RFE方案制定 · 与交付直接约会议</div>
+        <div style="font-size:12px;font-weight:700;color:var(--cm);margin:12px 0 8px;">CM 不负责</div>
+        <div class="note">机械问题回复 · 材料首检 · 合同催签 · 付款操作 · Case Status日常录入</div>
+      </div>
+      <div>
+        <div style="font-size:12px;font-weight:700;color:var(--consult);margin-bottom:8px;">顾问 负责</div>
+        <div class="note" style="background:var(--consult-l);border-color:var(--consult-b);color:#4C1D95;">专业评估 · 方案建议 · 报价 · 会议内录入CRM</div>
+        <div style="font-size:12px;font-weight:700;color:var(--consult);margin:12px 0 8px;">顾问 不负责</div>
+        <div class="note">日常跟进 · 材料催收 · 付款确认 · CRM日常录入 · 与交付对接 · 客户群常驻</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 721 rule -->
+  <div class="card">
+    <div class="card-title"><span class="badge">4</span>客户问题 721 分层回复规则</div>
+    <div class="frow" style="gap:16px;align-items:stretch;">
+      <div style="flex:1;min-width:150px;background:var(--cs-l);border:1.5px solid var(--cs-b);border-radius:10px;padding:14px;text-align:center;">
+        <div style="font-size:28px;font-weight:900;color:var(--cs);">70%</div>
+        <div style="font-size:12px;font-weight:700;color:var(--cs);margin-bottom:6px;">客服直接回复</div>
+        <div style="font-size:11px;color:var(--muted);">按话术模板，能查到答案直接回</div>
+      </div>
+      <div style="flex:1;min-width:150px;background:var(--cm-l);border:1.5px solid var(--cm-b);border-radius:10px;padding:14px;text-align:center;">
+        <div style="font-size:28px;font-weight:900;color:var(--cm);">20%</div>
+        <div style="font-size:12px;font-weight:700;color:var(--cm);margin-bottom:6px;">CM直接回复</div>
+        <div style="font-size:11px;color:var(--muted);">知识储备类问题，CM在群直接文字回</div>
+      </div>
+      <div style="flex:1;min-width:150px;background:var(--consult-l);border:1.5px solid var(--consult-b);border-radius:10px;padding:14px;text-align:center;">
+        <div style="font-size:28px;font-weight:900;color:var(--consult);">10%</div>
+        <div style="font-size:12px;font-weight:700;color:var(--consult);margin-bottom:6px;">约会议</div>
+        <div style="font-size:11px;color:var(--muted);">CM判断需要专业会议处理</div>
+      </div>
+    </div>
+    <br>
+    <div class="note rule">客服判断：能查到 → 直接回；查不到 → 转CM；CM自行判断文字回 or 约会议，客服无需区分20%和10%。</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ PAGE: 案件主流程 ═══════════════════════════════ -->
+<div id="p-main" class="page">
+  <div class="page-hdr"><h2>案件完整主流程</h2><p>从客户进入 → 案件最终完成的端到端旅程</p></div>
+
+  <div class="card">
+    <div class="card-title"><span class="badge">→</span>端到端时间轴</div>
+    <div class="tl">
+      <div class="tl-step">
+        <div class="tl-icon" style="background:var(--client-l);border-color:var(--client-b);">👤</div>
+        <div class="tl-title">客户进入</div>
+        <div class="tl-owner" style="background:var(--sales-l);color:var(--sales);">销售/线上</div>
+        <div class="tl-sub">小红书/转介绍/自拓</div>
+      </div>
+      <div class="tl-step">
+        <div class="tl-icon" style="background:var(--cs-l);border-color:var(--cs-b);">📋</div>
+        <div class="tl-title">交接建群<br>分层录入</div>
+        <div class="tl-owner" style="background:var(--cs-l);color:var(--cs);">客服</div>
+        <div class="tl-sub">Lark表单进CRM<br>A/B/C分层</div>
+      </div>
+      <div class="tl-step">
+        <div class="tl-icon" style="background:var(--cm-l);border-color:var(--cm-b);">💬</div>
+        <div class="tl-title">CM接手<br>安排咨询</div>
+        <div class="tl-owner" style="background:var(--cm-l);color:var(--cm);">CM</div>
+        <div class="tl-sub">评估签证路径<br>安排顾问会议</div>
+      </div>
+      <div class="tl-step">
+        <div class="tl-icon" style="background:var(--consult-l);border-color:var(--consult-b);">🎤</div>
+        <div class="tl-title">顾问咨询<br>会议</div>
+        <div class="tl-owner" style="background:var(--consult-l);color:var(--consult);">顾问</div>
+        <div class="tl-sub">专业评估/方案<br>报价/录入CRM</div>
+      </div>
+      <div class="tl-step">
+        <div class="tl-icon" style="background:var(--cs-l);border-color:var(--cs-b);">📝</div>
+        <div class="tl-title">签约付款<br>合同催签</div>
+        <div class="tl-owner" style="background:var(--cs-l);color:var(--cs);">客服</div>
+        <div class="tl-sub">48h催签机制<br>Case Status更新</div>
+      </div>
+      <div class="tl-step">
+        <div class="tl-icon" style="background:var(--cm-l);border-color:var(--cm-b);">🗒️</div>
+        <div class="tl-title">CM填写<br>Review Notes</div>
+        <div class="tl-owner" style="background:var(--cm-l);color:var(--cm);">CM</div>
+        <div class="tl-sub">签约意向/到期日<br>偏好/特殊需求</div>
+      </div>
+      <div class="tl-step">
+        <div class="tl-icon" style="background:var(--cs-l);border-color:var(--cs-b);">📁</div>
+        <div class="tl-title">客服核查<br>材料七步</div>
+        <div class="tl-owner" style="background:var(--cs-l);color:var(--cs);">客服</div>
+        <div class="tl-sub">完整+已付款<br>→触发交付</div>
+      </div>
+      <div class="tl-step">
+        <div class="tl-icon" style="background:var(--delivery-l);border-color:var(--delivery-b);">⚙️</div>
+        <div class="tl-title">交付操作<br>文书起草</div>
+        <div class="tl-owner" style="background:var(--delivery-l);color:var(--delivery);">交付</div>
+        <div class="tl-sub">LCA/I-129/PL<br>G-28/USCIS付款</div>
+      </div>
+      <div class="tl-step">
+        <div class="tl-icon" style="background:var(--delivery-l);border-color:var(--delivery-b);">📬</div>
+        <div class="tl-title">提交USCIS<br>等待审批</div>
+        <div class="tl-owner" style="background:var(--delivery-l);color:var(--delivery);">交付</div>
+        <div class="tl-sub">Receipt Notice<br>结果追踪</div>
+      </div>
+      <div class="tl-step">
+        <div class="tl-icon" style="background:var(--shared-l);border-color:var(--shared-b);">🎉</div>
+        <div class="tl-title">结果通知<br>客户</div>
+        <div class="tl-owner" style="background:var(--shared-l);color:var(--shared);">交付+客服</div>
+        <div class="tl-sub">邮件(交付)+<br>微信(客服)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="badge">!</span>关键流转节点</div>
+    <div class="two">
+      <div class="fcol">
+        <div class="n n-cs" style="width:100%;">① 销售 → 客服</div>
+        <div class="arr"><div class="arr-line"></div><div class="arr-lbl">Lark表单，信息齐全方可交接</div><div class="arr-head"></div></div>
+        <div class="n n-cs" style="width:100%;">② 客服核查 → 交付触发</div>
+        <div class="arr"><div class="arr-line"></div><div class="arr-lbl">team@转发+机器人通知中台群</div><div class="arr-head"></div></div>
+        <div class="n n-shared" style="width:100%;">③ 交付出结果 → 客服通知</div>
+        <div class="arr"><div class="arr-line"></div><div class="arr-lbl">交付更新表格→客服看表格自行跟进</div><div class="arr-head"></div></div>
+        <div class="n n-cm" style="width:100%;">④ 交付 ↔ CM直接对接</div>
+      </div>
+      <div>
+        <div class="note rule" style="margin-bottom:10px;">
+          <strong>跨部门通信规则</strong><br>
+          • 所有协作消息走<strong>交付中台群</strong>，禁止私聊<br>
+          • 每条消息注明：客户姓名 + 案件类型 + 具体问题<br>
+          • 交付与CM直接约会议，不经客服中转<br>
+          • 若CM因时区无法及时回复，可通过中台群请客服协助
+        </div>
+        <div class="note warn">
+          <strong>优先级规则</strong><br>
+          A/VIP客户 → 优先处理，24小时内有跟进动作<br>
+          B类客户 → 交接后3日内客服跟进<br>
+          C类客户 → 定期维护，不强推
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ PAGE: 销售入口 ═══════════════════════════════ -->
+<div id="p-sales" class="page">
+  <div class="page-hdr"><h2>销售 → 客户入口流程</h2><p>从客户首次接触到完成交接进入CRM</p></div>
+
+  <div class="card">
+    <div class="card-title"><span class="badge">→</span>交接完整流程</div>
+    <div class="fcol" style="max-width:520px;margin:0 auto;">
+      <div class="n n-client" style="width:100%;">客户通过销售/小红书/线上渠道进入</div>
+      <div class="arr"><div class="arr-line"></div><div class="arr-head"></div></div>
+      <div class="n n-sales" style="width:100%;">销售收集四项必要信息（缺一不得交接）</div>
+      <div style="background:var(--sales-l);border:1.5px solid var(--sales-b);border-radius:8px;padding:12px;width:100%;font-size:12px;margin:4px 0;">
+        ① 客户当前身份&nbsp;&nbsp;&nbsp;② 关键截止时间<br>③ 当前居住国家&nbsp;&nbsp;&nbsp;④ 核心诉求 + 疑问
+      </div>
+      <div class="arr"><div class="arr-line"></div><div class="arr-head"></div></div>
+      <div class="n n-sales" style="width:100%;">在微信建群，填写Lark表单</div>
+      <div style="background:var(--shared-l);border:1.5px solid var(--shared-b);border-radius:8px;padding:10px 14px;width:100%;font-size:11px;margin:4px 0;line-height:1.8;">
+        <strong>【新客户交接】表单内容</strong><br>
+        姓名/微信 · 签证类型 · 当前身份<br>
+        截止时间 · 所在地 · 核心问题 · 分层：A/B/C
+      </div>
+      <div class="arr"><div class="arr-line"></div><div class="arr-lbl">建群后30分钟内</div><div class="arr-head"></div></div>
+      <div class="n n-cs" style="width:100%;">客服核查表单信息完整性</div>
+      <div class="arr"><div class="arr-line"></div><div class="arr-head"></div></div>
+      <div class="n n-shared" style="width:100%;background:#FFFBEB;border-color:#FDE68A;color:#92400E;">信息是否完整？</div>
+      <div class="frow" style="width:100%;gap:10px;margin:4px 0;">
+        <div style="flex:1;" class="fcol">
+          <div style="font-size:10px;color:var(--muted);">否</div>
+          <div class="n n-cs" style="width:100%;font-size:11px;">客服/CM有权退回，要求销售补充</div>
+        </div>
+        <div style="flex:1;" class="fcol">
+          <div style="font-size:10px;color:var(--muted);">是</div>
+          <div class="n n-cs" style="width:100%;font-size:11px;">录入CRM · 完成分层标注</div>
+        </div>
+      </div>
+      <div class="arr"><div class="arr-line"></div><div class="arr-head"></div></div>
+      <div class="n n-cm" style="width:100%;">CM接手开始跟进</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="badge">!</span>销售边界规则</div>
+    <div class="two">
+      <div>
+        <div style="font-size:12px;font-weight:700;color:var(--sales);margin-bottom:8px;">销售可以做</div>
+        <div class="steps">
+          <div class="step-item"><div class="step-num" style="background:var(--sales-l);color:var(--sales);border:1px solid var(--sales-b);">✓</div><div class="step-body">收集客户基本信息并建群</div></div>
+          <div class="step-item"><div class="step-num" style="background:var(--sales-l);color:var(--sales);border:1px solid var(--sales-b);">✓</div><div class="step-body">填写Lark交接表单</div></div>
+          <div class="step-item"><div class="step-num" style="background:var(--sales-l);color:var(--sales);border:1px solid var(--sales-b);">✓</div><div class="step-body">CM询问时如实提供客户情况</div></div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:12px;font-weight:700;color:var(--decision);margin-bottom:8px;">销售不负责（禁止）</div>
+        <div class="steps">
+          <div class="step-item"><div class="step-num" style="background:var(--decision-l);color:var(--decision);border:1px solid var(--decision-b);">✗</div><div class="step-body">专业移民咨询</div></div>
+          <div class="step-item"><div class="step-num" style="background:var(--decision-l);color:var(--decision);border:1px solid var(--decision-b);">✗</div><div class="step-body">案件操作 · 材料/邮件处理</div></div>
+          <div class="step-item"><div class="step-num" style="background:var(--decision-l);color:var(--decision);border:1px solid var(--decision-b);">✗</div><div class="step-body"><strong>任何情况下不得自行向客户报价</strong></div></div>
+        </div>
+      </div>
+    </div>
+    <br>
+    <div class="note warn">⚠️ 定价规则：顾问在咨询会议中直接报价；会议外如需报价，由CM私下告知客服，客服转达客户。</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ PAGE: 顾问咨询 ═══════════════════════════════ -->
+<div id="p-consult" class="page">
+  <div class="page-hdr"><h2>顾问咨询会议流程</h2><p>从安排会议到会后跟进的完整操作</p></div>
+
+  <div class="card">
+    <div class="card-title"><span class="badge">→</span>会议安排全流程</div>
+    <div class="fcol" style="max-width:520px;margin:0 auto;">
+      <div class="n n-cm" style="width:100%;">CM评估需要咨询会议</div>
+      <div class="arr"><div class="arr-line"></div><div class="arr-head"></div></div>
+      <div class="n n-cs" style="width:100%;">客服确认顾问可用时间（查Lark日历）</div>
+      <div style="background:var(--consult-l);border:1.5px solid var(--consult-b);border-radius:8px;padding:10px 14px;width:100%;font-size:11px;margin:4px 0;">
+        <strong style="color:var(--consult);">Caroline 专属时间限制</strong><br>
+        周一至周五：北京时间 <strong>早7:45之前</strong> 或 <strong>晚9:00之后</strong>
+      </div>
+      <div class="arr"><div class="arr-line"></div><div class="arr-head"></div></div>
+      <div class="n n-cs" style="width:100%;">客服完成会议预约四项准备</div>
+      <div style="background:var(--cs-l);border:1.5px solid var(--cs-b);border-radius:8px;padding:10px 14px;width:100%;font-size:11px;margin:4px 0;line-height:2;">
+        ① 在Lark日历完成预约<br>
+        ② 确保顾问已收到客户所有信息（渠道/身份/截止时间/问题）<br>
+        ③ 确认客户收到会议链接，指引游客模式加入<br>
+        ④ @顾问和监督人二次确认
+      </div>
+      <div class="arr"><div class="arr-line"></div><div class="arr-head"></div></div>
+      <div class="n n-cs" style="width:100%;">预约后：客服加为参会人 · 开启自动录制 · 转让日历</div>
+      <div class="arr"><div class="arr-line"></div><div class="arr-head"></div></div>
+      <div class="n n-consult" style="width:100%;">顾问进行咨询会议（专业评估 · 方案建议 · 报价）</div>
+      <div class="arr"><div class="arr-line"></div><div class="arr-head"></div></div>
+      <div class="n n-consult" style="width:100%;">顾问会后即时录入CRM（咨询结论）</div>
+      <div class="arr"><div class="arr-line"></div><div class="arr-head"></div></div>
+      <div class="n n-cs" style="width:100%;">客服会后24小时内完成纪要PDF</div>
+      <div style="background:var(--cs-l);border:1.5px solid var(--cs-b);border-radius:8px;padding:8px 14px;width:100%;font-size:11px;margin:4px 0;">
+        先发顾问确认 → 再发客户 → 上传Lark → 链接填入CRM
+      </div>
+      <div class="arr"><div class="arr-line"></div><div class="arr-head"></div></div>
+      <div class="n n-cm" style="width:100%;">CM接手后续案件跟进（进度/偏好/待跟进事项）</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="badge">!</span>时间冲突处理规则</div>
+    <div class="two">
+      <div class="n n-shared" style="width:100%;padding:14px;flex-direction:column;gap:4px;">
+        <div>已跟客户确认时间</div>
+        <div style="font-size:11px;font-weight:400;color:var(--muted);">优先更换顾问</div>
+      </div>
+      <div class="n n-shared" style="width:100%;padding:14px;flex-direction:column;gap:4px;">
+        <div>已确认顾问</div>
+        <div style="font-size:11px;font-weight:400;color:var(--muted);">以顾问时间为准</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ PAGE: 签约付款 ═══════════════════════════════ -->
+<div id="p-contract" class="page">
+  <div class="page-hdr"><h2>签约 · 合同催签 · 付款流程</h2><p>从合同发出到全额付款触发交付的完整链路</p></div>
+
+  <div class="two">
+    <div class="card">
+      <div class="card-title"><span class="badge">1</span>合同催签流程</div>
+      <div class="fcol">
+        <div class="n n-cs" style="width:100%;">发出合同</div>
+        <div class="arr"><div class="arr-line"></div><div class="arr-lbl">48小时未签</div><div class="arr-head"></div></div>
+        <div class="n n-cs" style="width:100%;">催签第一次</div>
+        <div class="arr"><div class="arr-line"></div><div class="arr-lbl">仍未签，再过48小时</div><div class="arr-head"></div></div>
+        <div class="n n-cs" style="width:100%;">催签第二次（告知合同有效期）</div>
+        <div class="arr"><div class="arr-line"></div><div class="arr-lbl">仍无回应</div><div class="arr-head"></div></div>
+        <div class="n n-shared" style="width:100%;">判断是否需要CM介入</div>
+        <br>
+        <div class="note">📌 CM跟进客户发合同必须CC对应CM</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="badge">2</span>付款节点协作</div>
+      <div class="fcol">
+        <div class="n n-client" style="width:100%;">客户确认付款</div>
+        <div class="arr"><div class="arr-line"></div><div class="arr-head"></div></div>
+        <div class="n n-cs" style="width:100%;">Case Status 勾选【是否付款】+ 客户群回复确认</div>
+        <div class="arr"><div class="arr-line"></div><div class="arr-lbl">部分付款？</div><div class="arr-head"></div></div>
+        <div class="frow" style="width:100%;gap:8px;margin:4px 0;">
+          <div style="flex:1;" class="fcol">
+            <div style="font-size:10px;color:var(--muted);">是（部分付款）</div>
+            <div class="n n-cs" style="width:100%;font-size:11px;">Case Status注明已付/尾款金额，每周跟进一次</div>
+          </div>
+          <div style="flex:1;" class="fcol">
+            <div style="font-size:10px;color:var(--muted);">否（全额付清）</div>
+            <div class="n n-cs" style="width:100%;font-size:11px;">交付中台群通知：[姓名][业务]已全额付款</div>
+          </div>
+        </div>
+        <div class="arr"><div class="arr-line"></div><div class="arr-head"></div></div>
+        <div class="n n-cs" style="width:100%;">发完合同填Case Status：姓名/业务类型/付款时间/金额</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="badge">3</span>Review Notes 填写与催促</div>
+    <div class="fcol" style="max-width:520px;margin:0 auto;">
+      <div class="n n-cm" style="width:100%;">合同发出后，CM立即填写Review Notes</div>
+      <div style="background:var(--cm-l);border:1.5px solid var(--cm-b);border-radius:8px;padding:10px 14px;width:100%;font-size:11px;margin:4px 0;line-height:1.9;">
+        客户签约意向（强/一般/弱）· 身份到期日 · 下一个followup时间<br>当前进度 · 注意事项 · 沟通偏好 · 待交付跟进 · 特殊需求
+      </div>
+      <div class="arr"><div class="arr-line"></div><div class="arr-lbl">合同发出后24小时内未填写</div><div class="arr-head"></div></div>
+      <div class="n n-delivery" style="width:100%;">月阳第一次催促CM（中台群）+ 客服配合催促</div>
+      <div class="arr"><div class="arr-line"></div><div class="arr-lbl">再过24小时仍未填写</div><div class="arr-head"></div></div>
+      <div class="n n-decision" style="width:100%;">上报乐乐 → 乐乐通知CM负责人（楚仪/子栋）介入</div>
+      <div class="arr"><div class="arr-line"></div><div class="arr-head"></div></div>
+      <div class="n n-delivery" style="width:100%;">Review Notes完整 → 交付正常推进</div>
+      <br>
+      <div class="note warn">⚠️ 是否允许先操作后补Review Notes，一律由 Jasmine 判断，其他成员不得自行决定。</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ PAGE: 材料收发 ═══════════════════════════════ -->
+<div id="p-material" class="page">
+  <div class="page-hdr"><h2>邮件材料收发七步流程</h2><p>客服核查材料 → 触发交付操作的完整链路</p></div>
+
+  <div class="card">
+    <div class="card-title"><span class="badge">→</span>七步完整流程（泳道视图）</div>
+    <div class="sl-wrap">
+      <div class="sl" style="grid-template-columns:36px 1fr 1fr 1fr;">
+        <div></div>
+        <div class="sl-hdr" style="background:var(--client-l);color:var(--client);">客户</div>
+        <div class="sl-hdr" style="background:var(--cs-l);color:var(--cs);">客服</div>
+        <div class="sl-hdr" style="background:var(--delivery-l);color:var(--delivery);">交付</div>
+
+        <div style="writing-mode:vertical-lr;text-align:center;font-size:10px;color:var(--faint);font-weight:700;border-right:1px solid var(--border);padding:4px;">①</div>
+        <div class="sl-cell"><div class="sl-node" style="background:var(--client-l);color:var(--client);">发材料至<br>services@hibee.us</div></div>
+        <div class="sl-cell shade"></div>
+        <div class="sl-cell shade"></div>
+
+        <div style="writing-mode:vertical-lr;text-align:center;font-size:10px;color:var(--faint);font-weight:700;border-right:1px solid var(--border);padding:4px;">②</div>
+        <div class="sl-cell shade"></div>
+        <div class="sl-cell"><div class="sl-node" style="background:var(--cs-l);color:var(--cs);">逐项核查材料<br>（对照Lark知识库签证类型清单）</div></div>
+        <div class="sl-cell shade"></div>
+
+        <div style="writing-mode:vertical-lr;text-align:center;font-size:10px;color:var(--faint);font-weight:700;border-right:1px solid var(--border);padding:4px;">③</div>
+        <div class="sl-cell shade"></div>
+        <div class="sl-cell"><div class="sl-node" style="background:var(--cs-l);color:var(--cs);">核查Case Status<br>是否已付款</div></div>
+        <div class="sl-cell shade"></div>
+
+        <div style="writing-mode:vertical-lr;text-align:center;font-size:10px;color:var(--faint);font-weight:700;border-right:1px solid var(--border);padding:4px;">④</div>
+        <div class="sl-cell shade"></div>
+        <div class="sl-cell">
+          <div class="sl-node" style="background:var(--shared-l);color:var(--shared);border:1px solid var(--shared-b);">材料完整且已付款？<br><small>否 → 微信催补，等齐重走流程</small></div>
+        </div>
+        <div class="sl-cell shade"></div>
+
+        <div style="writing-mode:vertical-lr;text-align:center;font-size:10px;color:var(--faint);font-weight:700;border-right:1px solid var(--border);padding:4px;">⑤</div>
+        <div class="sl-cell shade"></div>
+        <div class="sl-cell"><div class="sl-node" style="background:var(--cs-l);color:var(--cs);">Case Status 点<br>【是否操作/可操作】</div></div>
+        <div class="sl-cell shade"></div>
+
+        <div style="writing-mode:vertical-lr;text-align:center;font-size:10px;color:var(--faint);font-weight:700;border-right:1px solid var(--border);padding:4px;">⑥</div>
+        <div class="sl-cell shade"></div>
+        <div class="sl-cell"><div class="sl-node" style="background:var(--cs-l);color:var(--cs);">转发至 team@hibee.us<br>主题：【材料已核查】<br>姓名｜业务类型｜日期</div></div>
+        <div class="sl-cell shade"></div>
+
+        <div style="writing-mode:vertical-lr;text-align:center;font-size:10px;color:var(--faint);font-weight:700;border-right:1px solid var(--border);padding:4px;">⑦</div>
+        <div class="sl-cell shade"></div>
+        <div class="sl-cell"><div class="sl-node" style="background:var(--shared-l);color:var(--shared);">机器人通知<br>交付中台群</div></div>
+        <div class="sl-cell"><div class="sl-node" style="background:var(--delivery-l);color:var(--delivery);">中台群立即回复确认<br>→ 开始操作</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="badge">!</span>材料有问题 → 补件催促</div>
+    <div class="fcol" style="max-width:480px;margin:0 auto;">
+      <div class="n n-delivery" style="width:100%;">交付发现材料有误/缺失</div>
+      <div class="arr"><div class="arr-line"></div><div class="arr-head"></div></div>
+      <div class="n n-shared" style="width:100%;">在交付中台群说明具体问题<br><small style="font-weight:400">格式：客户姓名｜案件类型｜具体问题描述</small></div>
+      <div class="arr"><div class="arr-line"></div><div class="arr-lbl">客服接收后</div><div class="arr-head"></div></div>
+      <div class="n n-cs" style="width:100%;">24小时内催促客户补充或修改</div>
+      <div class="arr"><div class="arr-line"></div><div class="arr-head"></div></div>
+      <div class="frow" style="width:100%;gap:10px;">
+        <div style="flex:1;" class="fcol">
+          <div style="font-size:10px;color:var(--muted);text-align:center;">客户在微信群回复</div>
+          <div class="n n-cs" style="width:100%;font-size:11px;">当班客服在中台群转发给交付<br>（优先邮件）</div>
+        </div>
+        <div style="flex:1;" class="fcol">
+          <div style="font-size:10px;color:var(--muted);text-align:center;">超48小时未补充</div>
+          <div class="n n-decision" style="width:100%;font-size:11px;">上报乐乐<br>判断是否CM介入</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ PAGE: 交付操作 ═══════════════════════════════ -->
+<div id="p-delivery" class="page">
+  <div class="page-hdr"><h2>交付团队操作流程</h2><p>H1B核心步骤 · 政府费用 · 操作出错处理</p></div>
+
+  <div class="card">
+    <div class="card-title"><span class="badge">1</span>H1B 案件核心操作（12步）</div>
+    <div style="background:var(--delivery-l);border:1.5px solid var(--delivery-b);border-radius:10px;padding:16px;">
+      <div class="steps">
+        <div class="step-item">
+          <div class="step-num" style="background:var(--cs-l);color:var(--cs);border:1px solid var(--cs-b);">触</div>
+          <div class="step-body">客服 Case Status 点【已付款/可操作】→ 韩月阳每日查中台表格确认新案 → 分配 Filing Staff</div>
+        </div>
+        <div class="step-item">
+          <div class="step-num" style="background:var(--delivery-l);color:var(--delivery);border:1px solid var(--delivery-b);">1</div>
+          <div class="step-body"><strong>发送问卷</strong>：LCA问卷 + I-129问卷<br>
+          <span style="font-size:11px;color:var(--muted);">A/VIP/已付款客户：3工作日无回则followup邮件</span></div>
+        </div>
+        <div class="step-item">
+          <div class="step-num" style="background:var(--delivery-l);color:var(--delivery);border:1px solid var(--delivery-b);">2</div>
+          <div class="step-body"><strong>收材料·检查完整度</strong>（LCA优先于I-129）；不完整则直接邮件联系客户补件</div>
+        </div>
+        <div class="step-item">
+          <div class="step-num" style="background:var(--delivery-l);color:var(--delivery);border:1px solid var(--delivery-b);">3</div>
+          <div class="step-body"><strong>提交LCA</strong>（可与步骤2并行）→ 等待批准约7个工作日<br>
+          <span style="font-size:11px;color:var(--muted);">首次sponsor的公司需EIN认证（韩月阳追踪）</span></div>
+        </div>
+        <div class="step-item">
+          <div class="step-num" style="background:var(--delivery-l);color:var(--delivery);border:1px solid var(--delivery-b);">4</div>
+          <div class="step-body"><strong>等LCA期间起草文书</strong>：Petition Letter + I-129表格 → 完成后提交Jasmine审核</div>
+        </div>
+        <div class="step-item">
+          <div class="step-num" style="background:var(--delivery-l);color:var(--delivery);border:1px solid var(--delivery-b);">5</div>
+          <div class="step-body"><strong>LCA批准后</strong>：PL + LCA发客户签字；同步发雇主LCA张贴公示指南</div>
+        </div>
+        <div class="step-item">
+          <div class="step-num" style="background:var(--delivery-l);color:var(--delivery);border:1px solid var(--delivery-b);">6</div>
+          <div class="step-body"><strong>整理Final Package</strong>（I-129含全部附件）→ Online提交<br>
+          <span style="font-size:11px;color:var(--muted);">特殊情况如需同步提交H4，则纸质递交</span></div>
+        </div>
+        <div class="step-item">
+          <div class="step-num" style="background:var(--decision-l);color:var(--decision);border:1px solid var(--decision-b);">7</div>
+          <div class="step-body"><strong style="color:var(--decision);">🔒 Jasmine专属：填写G-28</strong>（Representative账号权限，Paralegal账号无此权限）</div>
+        </div>
+        <div class="step-item">
+          <div class="step-num" style="background:var(--delivery-l);color:var(--delivery);border:1px solid var(--delivery-b);">8</div>
+          <div class="step-body"><strong>通知雇主 Review & Sign</strong>；韩月阳提交内部Payment Request（抄送客服）</div>
+        </div>
+        <div class="step-item">
+          <div class="step-num" style="background:var(--decision-l);color:var(--decision);border:1px solid var(--decision-b);">9</div>
+          <div class="step-body"><strong style="color:var(--decision);">🔒 Jasmine专属：PR批准后完成USCIS付款</strong></div>
+        </div>
+        <div class="step-item">
+          <div class="step-num" style="background:var(--delivery-l);color:var(--delivery);border:1px solid var(--delivery-b);">10</div>
+          <div class="step-body"><strong>发送Receipt Notice</strong>：付款后2-5小时生成，24小时内发给客户</div>
+        </div>
+        <div class="step-item">
+          <div class="step-num" style="background:var(--delivery-l);color:var(--delivery);border:1px solid var(--delivery-b);">11</div>
+          <div class="step-body"><strong>更新多维表格</strong>：每个步骤完成后Filing Staff即时更新</div>
+        </div>
+        <div class="step-item">
+          <div class="step-num" style="background:var(--delivery-l);color:var(--delivery);border:1px solid var(--delivery-b);">12</div>
+          <div class="step-body"><strong>审批结果追踪</strong>（韩月阳持续跟进）→ 批准后24小时内发批准函给客户</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="two">
+    <div class="card">
+      <div class="card-title"><span class="badge">2</span>政府费用提交流程</div>
+      <div class="fcol">
+        <div class="n n-delivery" style="width:100%;">Jasmine 向移民局提交付款</div>
+        <div class="arr"><div class="arr-line"></div><div class="arr-head"></div></div>
+        <div class="n n-delivery" style="width:100%;">提交完成后抄送客服<br><small style="font-weight:400">注明：姓名｜案件类型｜金额｜提交日期</small></div>
+        <div class="arr"><div class="arr-line"></div><div class="arr-head"></div></div>
+        <div class="n n-delivery" style="width:100%;">月阳在表格登记人员信息<br>（当天完成，不得延后）</div>
+        <div class="arr"><div class="arr-line"></div><div class="arr-head"></div></div>
+        <div class="n n-delivery" style="width:100%;">已提交费用登记入Case Status<br><small style="font-weight:400">费用类型｜金额｜提交日期｜经办人｜是否已付</small></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="badge">3</span>操作出错 紧急处理</div>
+      <div class="fcol">
+        <div class="n n-delivery" style="width:100%;">发现已提交材料有误</div>
+        <div class="arr"><div class="arr-line"></div><div class="arr-head"></div></div>
+        <div class="n n-delivery" style="width:100%;">立即通知Jasmine（中台群）<br><small style="font-weight:400">「[姓名][案件] 发现操作错误：[描述]」</small></div>
+        <div class="arr"><div class="arr-line"></div><div class="arr-head"></div></div>
+        <div class="n n-delivery" style="width:100%;">Jasmine评估影响范围</div>
+        <div class="arr"><div class="arr-line"></div><div class="arr-head"></div></div>
+        <div class="n n-cm" style="width:100%;">通知CM → CM+楚仪/子栋决定补救方案</div>
+        <div class="arr"><div class="arr-line"></div><div class="arr-head"></div></div>
+        <div class="n n-cs" style="width:100%;">如需对外 → 客服统一告知客户</div>
+        <div class="arr"><div class="arr-line"></div><div class="arr-head"></div></div>
+        <div class="n n-delivery" style="width:100%;">按方案执行 + 表格备注原因及结果</div>
+        <br>
+        <div class="note warn">原则：宁可等，不擅自操作。<br>任何错误必须第一时间上报，不得隐瞒。</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ PAGE: RFE ═══════════════════════════════ -->
+<div id="p-rfe" class="page">
+  <div class="page-hdr"><h2>RFE（移民局补件）协作流程</h2><p>三方分工：CM决策 · 交付执行 · 客服沟通</p></div>
+
+  <div class="card">
+    <div class="card-title"><span class="badge">→</span>完整RFE处理流程</div>
+    <div class="fcol" style="max-width:520px;margin:0 auto;">
+      <div class="n n-delivery" style="width:100%;">交付收到 RFE</div>
+      <div class="arr"><div class="arr-line"></div><div class="arr-head"></div></div>
+      <div class="n n-delivery" style="width:100%;">立即在交付中台群通知客服<br><small style="font-weight:400">「[客户姓名] 收到RFE，请知悉」</small></div>
+      <div class="arr"><div class="arr-line"></div><div class="arr-head"></div></div>
+      <div class="n n-cs" style="width:100%;">客服立即上报楚仪/子栋 + 对应CM</div>
+      <div class="arr"><div class="arr-line"></div><div class="arr-head"></div></div>
+      <div class="n n-decision" style="width:100%;">楚仪/子栋 + CM 决定对外口径</div>
+      <div class="arr"><div class="arr-line"></div><div class="arr-head"></div></div>
+      <div class="n n-cs" style="width:100%;">客服统一告知客户：<br>「您好，我们已收到移民局补充材料通知，<br>正在处理中，团队会尽快跟进并同步进展」</div>
+      <div class="arr"><div class="arr-line"></div><div class="arr-head"></div></div>
+      <div style="font-size:11px;color:var(--muted);margin:4px 0;">三方并行分工（不得越权）</div>
+      <div class="para" style="width:100%;">
+        <div class="para-col">
+          <div class="n n-cm" style="width:100%;">CM<br>方案决策</div>
+        </div>
+        <div class="para-div"></div>
+        <div class="para-col">
+          <div class="n n-delivery" style="width:100%;">交付<br>材料准备<br>RFE回复起草</div>
+        </div>
+        <div class="para-div"></div>
+        <div class="para-col">
+          <div class="n n-cs" style="width:100%;">客服<br>客户沟通</div>
+        </div>
+      </div>
+      <div class="arr"><div class="arr-line"></div><div class="arr-head"></div></div>
+      <div class="n n-delivery" style="width:100%;">Filing Staff起草 → Jasmine审核RFE回复</div>
+      <div class="arr"><div class="arr-line"></div><div class="arr-head"></div></div>
+      <div class="n n-delivery" style="width:100%;">提交RFE回复</div>
+    </div>
+    <br>
+    <div class="note rule">📌 此阶段交付暂不向客户提供RFE原文，所有对外口径由楚仪/子栋和CM统一决定后，由客服传达。</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ PAGE: 审批结果 ═══════════════════════════════ -->
+<div id="p-result" class="page">
+  <div class="page-hdr"><h2>审批结果 / 中签结果通知流程</h2><p>结果出来后的双渠道通知机制</p></div>
+
+  <div class="two">
+    <div class="card">
+      <div class="card-title"><span class="badge">✓</span>中签 / 批准</div>
+      <div class="fcol">
+        <div class="n n-delivery" style="width:100%;">结果出来（韩月阳持续追踪）</div>
+        <div class="arr"><div class="arr-line"></div><div class="arr-head"></div></div>
+        <div class="n n-delivery" style="width:100%;">更新交付表格状态</div>
+        <div class="arr"><div class="arr-line"></div><div class="arr-head"></div></div>
+        <div class="n n-delivery" style="width:100%;">邮件正式通知客户<br><small style="font-weight:400">批准后24小时内发批准函</small></div>
+        <div class="arr"><div class="arr-line"></div><div class="arr-lbl">客服看到表格更新</div><div class="arr-head"></div></div>
+        <div class="n n-cs" style="width:100%;">微信群告知客户结果</div>
+        <br>
+        <div class="note rule">邮件在前，微信在后，两步都必须完成。<br>客服无需交付单独通知，看表格自行跟进。</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="badge">✗</span>未中签 / 拒批</div>
+      <div class="fcol">
+        <div class="n n-delivery" style="width:100%;">发送未中签通知邮件</div>
+        <div class="arr"><div class="arr-line"></div><div class="arr-head"></div></div>
+        <div class="n n-delivery" style="width:100%;">交付表格标注【未中签】及日期</div>
+        <div class="arr"><div class="arr-line"></div><div class="arr-head"></div></div>
+        <div class="n n-cs" style="width:100%;">客服微信告知客户结果</div>
+        <div class="arr"><div class="arr-line"></div><div class="arr-head"></div></div>
+        <div class="n n-cm" style="width:100%;">CM评估后续方案（其他签证路径）</div>
+        <div class="arr"><div class="arr-line"></div><div class="arr-head"></div></div>
+        <div class="n n-cm" style="width:100%;">CM告知客服后续跟进方向</div>
+        <div class="arr"><div class="arr-line"></div><div class="arr-head"></div></div>
+        <div class="n n-cs" style="width:100%;">客服将客户纳入激活跟进<br><small style="font-weight:400">每周四杨帆发话术激活</small></div>
+        <div class="arr"><div class="arr-line"></div><div class="arr-lbl">特殊情况（如被裁员）</div><div class="arr-head"></div></div>
+        <div class="n n-decision" style="width:100%;">上报乐乐 → 判断是否楚仪/子栋介入</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="badge">!</span>已中签客户材料收集</div>
+    <div class="two">
+      <div class="fcol">
+        <div class="n n-delivery" style="width:100%;">已中签客户</div>
+        <div class="arr"><div class="arr-line"></div><div class="arr-head"></div></div>
+        <div class="n n-delivery" style="width:100%;">交付直接发邮件收集材料<br><small style="font-weight:400">使用Jasmine统一模板，不得自行修改格式</small></div>
+        <div class="arr"><div class="arr-line"></div><div class="arr-head"></div></div>
+        <div class="n n-delivery" style="width:100%;">在交付表格标注【材料收集中】及发送日期</div>
+      </div>
+      <div class="fcol">
+        <div class="n n-cs" style="width:100%;">其他类型客户</div>
+        <div class="arr"><div class="arr-line"></div><div class="arr-head"></div></div>
+        <div class="n n-cs" style="width:100%;">由客服负责发送材料表格</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ PAGE: 班次交接 ═══════════════════════════════ -->
+<div id="p-shift" class="page">
+  <div class="page-hdr"><h2>班次交接 · 客服日常运营</h2><p>乐乐（中国白班）与杨帆（美国白班）的交接机制</p></div>
+
+  <div class="card">
+    <div class="card-title"><span class="badge">1</span>班次时间覆盖</div>
+    <div style="background:var(--bg);border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:10px;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="flex:1;background:var(--cs-l);border:1.5px solid var(--cs-b);border-radius:8px;padding:12px;text-align:center;">
+          <div style="font-size:13px;font-weight:800;color:var(--cs);">乐乐</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:4px;">北京 早9:00 — 晚9:00<br>ET 晚9pm — 早9am</div>
+        </div>
+        <div style="font-size:20px;color:var(--faint);">→</div>
+        <div style="flex:1;background:var(--cs-l);border:1.5px solid var(--cs-b);border-radius:8px;padding:12px;text-align:center;">
+          <div style="font-size:13px;font-weight:800;color:var(--cs);">杨帆</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:4px;">北京 晚9:00 — 凌晨4:00<br>ET 早9am — 下午4pm</div>
+        </div>
+      </div>
+      <div class="note warn">⚠️ 北京凌晨4点—早9点（ET下午4pm—晚9pm）暂无客服覆盖，建议评估是否需要补充排班。</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="badge">2</span>乐乐→杨帆 下班交接流程</div>
+    <div class="fcol" style="max-width:480px;margin:0 auto;">
+      <div class="n n-cs" style="width:100%;">乐乐晚8点后处理积压专业问题</div>
+      <div class="arr"><div class="arr-line"></div><div class="arr-head"></div></div>
+      <div class="n n-cs" style="width:100%;">下班前确认所有消息已回复</div>
+      <div class="arr"><div class="arr-line"></div><div class="arr-head"></div></div>
+      <div class="n n-cs" style="width:100%;">按Lark群格式完成交接记录<br><small style="font-weight:400">（未回的问题写入记录，注明需杨帆跟进）</small></div>
+      <div class="arr"><div class="arr-line"></div><div class="arr-head"></div></div>
+      <div class="n n-cs" style="width:100%;">发给杨帆</div>
+      <div class="arr"><div class="arr-line"></div><div class="arr-head"></div></div>
+      <div class="n n-cs" style="width:100%;">杨帆上班后先查交接记录<br>回复确认已收到</div>
+      <div class="arr"><div class="arr-line"></div><div class="arr-head"></div></div>
+      <div class="n n-cs" style="width:100%;">优先处理标注紧急事项<br>在客户群@对应CM注明【乐乐交接：[问题]，请跟进】</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="badge">3</span>每周固定任务</div>
+    <div class="two">
+      <div>
+        <div style="font-size:12px;font-weight:700;color:var(--cs);margin-bottom:8px;">乐乐 每周任务</div>
+        <div class="steps">
+          <div class="step-item"><div class="step-num" style="background:var(--cs-l);color:var(--cs);border:1px solid var(--cs-b);font-size:9px;">五</div><div class="step-body">周五下午：检查Case Status完整度 + A类客户抽查</div></div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:12px;font-weight:700;color:var(--cs);margin-bottom:8px;">杨帆 每周任务</div>
+        <div class="steps">
+          <div class="step-item"><div class="step-num" style="background:var(--cs-l);color:var(--cs);border:1px solid var(--cs-b);font-size:9px;">五</div><div class="step-body">周五晚：检查CRM当周新建群，漏填督促补录</div></div>
+          <div class="step-item"><div class="step-num" style="background:var(--cs-l);color:var(--cs);border:1px solid var(--cs-b);font-size:9px;">四</div><div class="step-body">周四晚：对未回复/长期无互动客户发话术激活；无回应记入记录，乐乐判断是否关闭</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="badge">4</span>跨部门会议结构</div>
+    <div class="two">
+      <div style="background:var(--delivery-l);border:1.5px solid var(--delivery-b);border-radius:10px;padding:14px;">
+        <div style="font-size:12px;font-weight:700;color:var(--delivery);margin-bottom:8px;">每日 17:00 · 交付组日会</div>
+        <div style="font-size:11px;line-height:1.8;color:var(--muted);">
+          参会：交付全员 + 蒲乐（客服联络）<br>
+          ① 今日推进了什么<br>
+          ② 当前卡点/需要什么支持<br>
+          ③ 明日计划
+        </div>
+      </div>
+      <div style="background:var(--shared-l);border:1.5px solid var(--shared-b);border-radius:10px;padding:14px;">
+        <div style="font-size:12px;font-weight:700;color:var(--shared);margin-bottom:8px;">周一/三/五 9:30 · 跨部门同步会</div>
+        <div style="font-size:11px;line-height:1.8;color:var(--muted);">
+          参会：交付全员 + CM + 客服<br>
+          主持：Jasmine → 逐步移交月阳<br>
+          议题：A/VIP进度 · 近期结果 · Review Notes · 特殊情况
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ PAGE: 升级决策 ═══════════════════════════════ -->
+<div id="p-escalation" class="page">
+  <div class="page-hdr"><h2>升级与决策路径</h2><p>各类问题的上报链路与决策权归属</p></div>
+
+  <div class="card">
+    <div class="card-title"><span class="badge">!</span>乐乐不能自行决定（必须上报楚仪/子栋）</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;">
+      <div class="n n-decision">补偿 / 折扣</div>
+      <div class="n n-decision">退款</div>
+      <div class="n n-decision">合同法律风险</div>
+      <div class="n n-decision">更换CM</div>
+      <div class="n n-decision">VIP转介绍奖励政策</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="badge">→</span>各场景升级路径</div>
+    <div style="display:flex;flex-direction:column;gap:14px;">
+
+      <div style="background:var(--bg);border-radius:10px;padding:14px;">
+        <div style="font-size:12px;font-weight:700;margin-bottom:8px;">场景1：Review Notes 未填写</div>
+        <div class="frow" style="gap:6px;justify-content:flex-start;">
+          <div class="n n-delivery" style="font-size:11px;">月阳催促CM<br>（24h后）</div>
+          <div class="arr-r"><div class="arr-r-line"></div><div class="arr-r-head"></div></div>
+          <div class="n n-delivery" style="font-size:11px;">再过24h<br>未填</div>
+          <div class="arr-r"><div class="arr-r-line"></div><div class="arr-r-head"></div></div>
+          <div class="n n-cs" style="font-size:11px;">上报乐乐</div>
+          <div class="arr-r"><div class="arr-r-line"></div><div class="arr-r-head"></div></div>
+          <div class="n n-decision" style="font-size:11px;">楚仪/子栋介入</div>
+        </div>
+      </div>
+
+      <div style="background:var(--bg);border-radius:10px;padding:14px;">
+        <div style="font-size:12px;font-weight:700;margin-bottom:8px;">场景2：客户48小时未补件</div>
+        <div class="frow" style="gap:6px;justify-content:flex-start;">
+          <div class="n n-cs" style="font-size:11px;">24h内催促</div>
+          <div class="arr-r"><div class="arr-r-line"></div><div class="arr-r-head"></div></div>
+          <div class="n n-cs" style="font-size:11px;">超48h仍未补</div>
+          <div class="arr-r"><div class="arr-r-line"></div><div class="arr-r-head"></div></div>
+          <div class="n n-cs" style="font-size:11px;">上报乐乐</div>
+          <div class="arr-r"><div class="arr-r-line"></div><div class="arr-r-head"></div></div>
+          <div class="n n-cm" style="font-size:11px;">判断CM介入</div>
+        </div>
+      </div>
+
+      <div style="background:var(--bg);border-radius:10px;padding:14px;">
+        <div style="font-size:12px;font-weight:700;margin-bottom:8px;">场景3：操作出错</div>
+        <div class="frow" style="gap:6px;justify-content:flex-start;">
+          <div class="n n-delivery" style="font-size:11px;">交付发现<br>错误</div>
+          <div class="arr-r"><div class="arr-r-line"></div><div class="arr-r-head"></div></div>
+          <div class="n n-delivery" style="font-size:11px;">通知Jasmine<br>评估</div>
+          <div class="arr-r"><div class="arr-r-line"></div><div class="arr-r-head"></div></div>
+          <div class="n n-cm" style="font-size:11px;">CM + 楚仪/子栋<br>决定补救</div>
+          <div class="arr-r"><div class="arr-r-line"></div><div class="arr-r-head"></div></div>
+          <div class="n n-cs" style="font-size:11px;">客服统一<br>告知客户</div>
+        </div>
+      </div>
+
+      <div style="background:var(--bg);border-radius:10px;padding:14px;">
+        <div style="font-size:12px;font-weight:700;margin-bottom:8px;">场景4：RFE收到</div>
+        <div class="frow" style="gap:6px;justify-content:flex-start;">
+          <div class="n n-delivery" style="font-size:11px;">交付收到RFE<br>通知客服</div>
+          <div class="arr-r"><div class="arr-r-line"></div><div class="arr-r-head"></div></div>
+          <div class="n n-cs" style="font-size:11px;">上报楚仪/子栋<br>+ CM</div>
+          <div class="arr-r"><div class="arr-r-line"></div><div class="arr-r-head"></div></div>
+          <div class="n n-decision" style="font-size:11px;">楚仪/子栋+CM<br>决定口径</div>
+          <div class="arr-r"><div class="arr-r-line"></div><div class="arr-r-head"></div></div>
+          <div class="n n-cs" style="font-size:11px;">客服统一<br>告知客户</div>
+        </div>
+      </div>
+
+      <div style="background:var(--bg);border-radius:10px;padding:14px;">
+        <div style="font-size:12px;font-weight:700;margin-bottom:8px;">场景5：未中签特殊情况（如被裁员）</div>
+        <div class="frow" style="gap:6px;justify-content:flex-start;">
+          <div class="n n-cs" style="font-size:11px;">客服发现<br>特殊情况</div>
+          <div class="arr-r"><div class="arr-r-line"></div><div class="arr-r-head"></div></div>
+          <div class="n n-cs" style="font-size:11px;">上报乐乐</div>
+          <div class="arr-r"><div class="arr-r-line"></div><div class="arr-r-head"></div></div>
+          <div class="n n-decision" style="font-size:11px;">判断是否<br>楚仪/子栋介入</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="badge">🔒</span>Jasmine 专属决策权（其他成员不得代为操作）</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;">
+      <div class="n n-delivery">USCIS付款</div>
+      <div class="n n-delivery">G-28填写</div>
+      <div class="n n-delivery">是否先操作后补Review Notes</div>
+      <div class="n n-delivery">操作错误的影响范围评估</div>
+    </div>
+    <br>
+    <div class="note warn">⚠️ G-28和USCIS付款依赖Representative账号权限，Jasmine不在时这两个步骤无法推进，需提前评估风险。</div>
+  </div>
+</div>
+
+<script>
+function show(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('p-' + id).classList.add('active');
+  event.target.classList.add('active');
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+</script>
+</body>
+</html>
